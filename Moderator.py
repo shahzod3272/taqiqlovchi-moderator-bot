@@ -11,7 +11,7 @@ bot = Bot(token=TOKEN)
 dp = Dispatcher(storage=MemoryStorage())
 router = Router()
 
-# 🚫 O'chirilishi KERAK bo'lgan kalit so'zlar (Do'stlik, Savxoz, 11 va boshqalar)
+# 🚫 O'chirilishi KERAK bo'lgan kalit so'zlar
 BANNED_KEYWORDS = [
     "do'stlik", "dostlik", "do'stliga", "dostliga", "do'stlikka", "dostlikka",
     "savxoz", "sovxoz", "savxozga", "sovxozga",
@@ -51,7 +51,7 @@ async def filter_group_messages(message: Message):
 
     text_lower = message.text.lower()
 
-    # 1. 🛡️ Avval ISTISNOLARni tekshiramiz (Jizzax, Toshkent va h.k. bo'lsa tegilmaydi)
+    # 1. 🛡️ Avval ISTISNOLARni tekshiramiz
     for exception_word in EXCEPTIONS:
         if exception_word in text_lower:
             return  # Istisno topildi, xabarga tegilmaydi!
@@ -61,12 +61,15 @@ async def filter_group_messages(message: Message):
 
     if should_delete:
         try:
+            chat_id = message.chat.id
+            
             # 1. Keraksiz e'lonni o'chirish
             await message.delete()
 
             # 2. O'rniga o'zingizning reklama/taklif xabaringizni yuborish
-            await message.answer(
-                CUSTOM_REPLY_TEXT,
+            await bot.send_message(
+                chat_id=chat_id,
+                text=CUSTOM_REPLY_TEXT,
                 parse_mode="Markdown"
             )
 
